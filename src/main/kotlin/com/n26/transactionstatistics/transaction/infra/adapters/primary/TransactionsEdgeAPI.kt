@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/transactions")
-class TransactionsEdgeAPI(val transactionsManager : TransactionsManager, val applicationPublisher: ApplicationEventPublisher) {
+class TransactionsEdgeAPI(private val transactionsManager : TransactionsManager, private val applicationPublisher: ApplicationEventPublisher) {
 
     @PostMapping
     fun add(@RequestBody transactionAPI: TransactionAPI) : ResponseEntity<Unit> {
@@ -20,6 +20,7 @@ class TransactionsEdgeAPI(val transactionsManager : TransactionsManager, val app
             val transaction = transactionAPI.toTransaction()
             transactionsManager.add(transaction)
             applicationPublisher.publishEvent(TransactionCreatedEvent(transaction.amount, transaction.timestamp))
+
         } catch (exp : InfraException) {
             return ResponseEntity.status(exp.code).build()
         }
@@ -30,6 +31,7 @@ class TransactionsEdgeAPI(val transactionsManager : TransactionsManager, val app
     fun removeAll() : ResponseEntity<Unit> {
         transactionsManager.removeAll()
         applicationPublisher.publishEvent(TransactionsClearedEvent())
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

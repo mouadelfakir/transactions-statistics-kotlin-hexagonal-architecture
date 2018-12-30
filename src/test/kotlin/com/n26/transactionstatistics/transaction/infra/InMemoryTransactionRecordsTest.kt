@@ -5,7 +5,7 @@ import com.n26.transactionstatistics.transaction.domain.ports.secondary.Transact
 import com.n26.transactionstatistics.transaction.infra.adapters.secondary.InMemoryTransactionRecords
 import org.junit.Before
 import org.junit.Test
-import java.math.BigDecimal
+import java.math.BigDecimal.valueOf
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -20,14 +20,14 @@ class InMemoryTransactionRecordsTest {
 
     @Test
     fun `can persist a transaction`() {
-        val transaction = Transaction(BigDecimal.valueOf(1234), Instant.now())
+        val transaction = Transaction(valueOf(1234), Instant.now())
         assertEquals(transaction, transactionRecords.add(transaction))
     }
 
     @Test
     fun `can add many transactions`() {
-        val transaction1 = Transaction(BigDecimal.valueOf(1234), Instant.now())
-        val transaction2 = Transaction(BigDecimal.valueOf(12345), Instant.now())
+        val transaction1 = Transaction(valueOf(1234), Instant.now())
+        val transaction2 = Transaction(valueOf(12345), Instant.now())
 
 
         transactionRecords.add(transaction1)
@@ -41,8 +41,8 @@ class InMemoryTransactionRecordsTest {
 
     @Test
     fun `can remove all transactions`() {
-        val transaction1 = Transaction(BigDecimal.valueOf(1234), Instant.now())
-        val transaction2 = Transaction(BigDecimal.valueOf(12345), Instant.now())
+        val transaction1 = Transaction(valueOf(1234), Instant.now())
+        val transaction2 = Transaction(valueOf(12345), Instant.now())
 
         transactionRecords.add(transaction1)
         transactionRecords.add(transaction2)

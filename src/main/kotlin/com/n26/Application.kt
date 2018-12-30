@@ -7,10 +7,8 @@ import com.n26.transactionstatistics.transaction.infra.adapters.secondary.InMemo
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
-import org.springframework.scheduling.annotation.EnableAsync
 import java.util.concurrent.Executors
 
-@EnableAsync
 @SpringBootApplication
 open class Application {
 

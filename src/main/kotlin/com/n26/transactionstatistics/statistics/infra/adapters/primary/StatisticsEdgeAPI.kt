@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/statistics")
-class StatisticsEdgeAPI(val statisticsStore: StatisticsStore) {
+class StatisticsEdgeAPI(private val statisticsStore: StatisticsStore) {
 
     @GetMapping
     fun get() : ResponseEntity<StatisticsAPI> {

@@ -6,7 +6,7 @@ import com.n26.transactionstatistics.event.TransactionCreatedEvent
 import com.n26.transactionstatistics.event.TransactionsClearedEvent
 import org.springframework.context.event.EventListener
 
-open class StatisticsEventHandler(val statisticsStore: StatisticsStore) {
+open class StatisticsEventHandler(private val statisticsStore: StatisticsStore) {
 
     @EventListener
     open fun handle(event: TransactionCreatedEvent){

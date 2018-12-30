@@ -1,20 +1,20 @@
 package com.n26.transactionstatistics.statistics.domain
 
 import com.n26.transactionstatistics.statistics.domain.port.primary.StatisticsStore
+import com.n26.transactionstatistics.util.kPlusSeconds
 import java.math.BigDecimal
 import java.time.Instant
-import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoUnit.SECONDS
 import java.util.concurrent.Callable
 
-data class Element(val statisticsStore: StatisticsStore, val amount: BigDecimal, val timestamp: Instant) : Callable<Unit>{
-
+data class Element(val context: StatisticsStore, val amount: BigDecimal, val timestamp: Instant) : Callable<Unit>{
 
     init {
-        val delay = ChronoUnit.SECONDS.between(Instant.now(), timestamp.plusSeconds(60))
-        statisticsStore.scheduleEvict(this, delay)
+        val delay = SECONDS.between(Instant.now(), timestamp.kPlusSeconds())
+        context.scheduleEvict(this, delay)
     }
 
     override fun call() {
-        statisticsStore.evict(this)
+        context.evict(this)
     }
 }

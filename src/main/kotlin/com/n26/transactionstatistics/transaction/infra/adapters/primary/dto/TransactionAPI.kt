@@ -18,6 +18,7 @@ data class TransactionAPI(val amount: String, val timestamp: String) {
                 is NumberFormatException -> throw InfraException(UNPROCESSABLE_ENTITY.value())
                 is DateTimeParseException -> throw InfraException(UNPROCESSABLE_ENTITY.value())
                 is DomainException -> throw InfraException(e.code)
+
                 else -> throw e
             }
         }
