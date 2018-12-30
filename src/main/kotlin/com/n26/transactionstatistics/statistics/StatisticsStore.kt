@@ -1,6 +1,7 @@
 package com.n26.transactionstatistics.statistics
 
 import com.n26.transactionstatistics.statistics.domain.Element
+import com.n26.transactionstatistics.statistics.domain.Statistics
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.math.BigDecimal.valueOf
@@ -13,33 +14,38 @@ class StatisticsStore(val executor: ScheduledExecutorService, var sum : BigDecim
 
     private val elements = ConcurrentLinkedDeque<Element>()
 
-    fun add(element: Element) : Boolean {
+    fun add(element: Element): Boolean {
         beforeAdd(element)
         return elements.add(element)
     }
 
     fun has(element: Element): Boolean = elements.contains(element)
 
-    fun scheduleEvict(element: Element, delay: Long) { executor.schedule(element, delay, TimeUnit.SECONDS) }
+    fun scheduleEvict(element: Element, delay: Long) {
+        executor.schedule(element, delay, TimeUnit.SECONDS)
+    }
 
     fun evict(element: Element) {
         elements.remove(element)
         afterEvict(element)
     }
 
-    @Synchronized private fun beforeAdd(element: Element) {
+    @Synchronized
+    private fun beforeAdd(element: Element) {
         sum = sum.add(element.amount)
-        min = if(count() == 0) element.amount else if(element.amount < min) element.amount else min
-        max = if(count() == 0) element.amount else if(element.amount > max) element.amount else max
+        min = if (count() == 0) element.amount else if (element.amount < min) element.amount else min
+        max = if (count() == 0) element.amount else if (element.amount > max) element.amount else max
     }
 
-    @Synchronized private fun afterEvict(element: Element) {
+    @Synchronized
+    private fun afterEvict(element: Element) {
         sum = sum.minus(element.amount)
-        min = elements.stream().map { e -> e.amount }.min { a, b ->  a.compareTo(b)}.orElse(ZERO)
-        max = elements.stream().map { e -> e.amount }.max { a, b ->  a.compareTo(b)}.orElse(ZERO)
+        min = elements.stream().map { e -> e.amount }.min { a, b -> a.compareTo(b) }.orElse(ZERO)
+        max = elements.stream().map { e -> e.amount }.max { a, b -> a.compareTo(b) }.orElse(ZERO)
     }
 
-    @Synchronized private fun afterClear() {
+    @Synchronized
+    private fun afterClear() {
         sum = ZERO
         min = ZERO
         max = ZERO
@@ -47,7 +53,7 @@ class StatisticsStore(val executor: ScheduledExecutorService, var sum : BigDecim
 
     fun sum(): BigDecimal = sum.to2Up()
 
-    fun avg(): BigDecimal = if(elements.isEmpty()) ZERO.to2Up() else sum.divide(valueOf(count().toLong())).to2Up()
+    fun avg(): BigDecimal = if (elements.isEmpty()) ZERO.to2Up() else sum.divideTo2Up(valueOf(count().toLong()))
 
     fun min(): BigDecimal = min.to2Up()
 
@@ -59,7 +65,10 @@ class StatisticsStore(val executor: ScheduledExecutorService, var sum : BigDecim
         elements.clear()
         afterClear()
     }
+
+    fun statistics(): Statistics = Statistics(sum(), avg(), max(), min(), count())
+
 }
 
-
 fun BigDecimal.to2Up() = this.setScale(2, RoundingMode.HALF_UP)
+fun BigDecimal.divideTo2Up(other: BigDecimal) = this.divide(other, 2, RoundingMode.HALF_UP)

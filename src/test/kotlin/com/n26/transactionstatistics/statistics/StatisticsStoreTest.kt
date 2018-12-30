@@ -1,6 +1,7 @@
 package com.n26.transactionstatistics.statistics
 
 import com.n26.transactionstatistics.statistics.domain.Element
+import com.n26.transactionstatistics.statistics.domain.Statistics
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal.ZERO
@@ -42,8 +43,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `can eject many expired elements`() {
-        val element1 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(60))
-        val element2 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(59))
+        val element1 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(59))
+        val element2 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(58))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -51,7 +52,7 @@ class StatisticsStoreTest {
         assertTrue(statisticsStore.has(element1))
         assertTrue(statisticsStore.has(element2))
 
-        TimeUnit.SECONDS.sleep(1)
+        TimeUnit.SECONDS.sleep(2)
 
         assertFalse(statisticsStore.has(element1))
         assertTrue(statisticsStore.has(element2))
@@ -225,7 +226,7 @@ class StatisticsStoreTest {
 
         assertEquals(valueOf(12).setScale(2, RoundingMode.HALF_UP), statisticsStore.min())
 
-        TimeUnit.SECONDS.sleep(2)
+        TimeUnit.SECONDS.sleep(1)
 
         assertEquals(ZERO.setScale(2, RoundingMode.HALF_UP), statisticsStore.min())
     }
@@ -258,8 +259,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right maximum when elements evicted`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(59))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(60))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(58))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(59))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -270,7 +271,7 @@ class StatisticsStoreTest {
 
         assertEquals(valueOf(12).setScale(2, RoundingMode.HALF_UP), statisticsStore.max())
 
-        TimeUnit.SECONDS.sleep(1)
+        TimeUnit.SECONDS.sleep(2)
 
         assertEquals(ZERO.setScale(2, RoundingMode.HALF_UP), statisticsStore.max())
     }
@@ -297,5 +298,26 @@ class StatisticsStoreTest {
         assertEquals(ZERO.setScale(2, RoundingMode.HALF_UP),  statisticsStore.min())
         assertEquals(ZERO.setScale(2, RoundingMode.HALF_UP),  statisticsStore.max())
         assertEquals(0,  statisticsStore.count())
+    }
+
+    @Test
+    fun `load statistics`() {
+
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(10))
+        val element2 = Element(statisticsStore, valueOf(9.11), Instant.now().minusSeconds(10))
+        val element3 = Element(statisticsStore, valueOf(17.12), Instant.now().minusSeconds(10))
+
+        statisticsStore.add(element1)
+        statisticsStore.add(element2)
+        statisticsStore.add(element3)
+
+        val statistics : Statistics = statisticsStore.statistics()
+
+        assertEquals(valueOf(38.23), statistics.sum)
+        assertEquals(valueOf(12.74), statistics.avg)
+        assertEquals(valueOf(17.12), statistics.max)
+        assertEquals(valueOf(9.11), statistics.min)
+        assertEquals(3, statistics.count)
+
     }
 }
