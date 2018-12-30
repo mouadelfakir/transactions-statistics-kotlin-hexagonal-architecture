@@ -3,7 +3,7 @@ package com.n26.transactionstatistics.statistics
 import com.n26.transactionstatistics.statistics.domain.Element
 import com.n26.transactionstatistics.statistics.domain.Statistics
 import com.n26.transactionstatistics.statistics.domain.port.primary.StatisticsStore
-import com.n26.transactionstatistics.util.kScale
+import com.n26.transactionstatistics.util.n26Scale
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal.ZERO
@@ -117,7 +117,7 @@ class StatisticsStoreTest {
 
         statisticsStore.clear()
 
-        assertEquals(valueOf(0.00).kScale(),  statisticsStore.sum());
+        assertEquals(valueOf(0.00).n26Scale(),  statisticsStore.sum());
     }
 
     @Test
@@ -169,7 +169,7 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(10.50).kScale(),  statisticsStore.avg());
+        assertEquals(valueOf(10.50).n26Scale(),  statisticsStore.avg());
     }
 
     @Test
@@ -180,11 +180,11 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(10.50).kScale(),  statisticsStore.avg());
+        assertEquals(valueOf(10.50).n26Scale(),  statisticsStore.avg());
 
         SECONDS.sleep(1)
 
-        assertEquals(valueOf(11).kScale(),  statisticsStore.avg());
+        assertEquals(valueOf(11).n26Scale(),  statisticsStore.avg());
     }
 
     @Test
@@ -195,11 +195,11 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(10.50).kScale(),  statisticsStore.avg())
+        assertEquals(valueOf(10.50).n26Scale(),  statisticsStore.avg())
 
         statisticsStore.clear()
 
-        assertEquals(ZERO.kScale(),  statisticsStore.avg())
+        assertEquals(ZERO.n26Scale(),  statisticsStore.avg())
     }
 
     @Test
@@ -210,7 +210,7 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(9).kScale(), statisticsStore.min())
+        assertEquals(valueOf(9).n26Scale(), statisticsStore.min())
     }
 
     @Test
@@ -221,15 +221,15 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(9).kScale(), statisticsStore.min())
+        assertEquals(valueOf(9).n26Scale(), statisticsStore.min())
 
         SECONDS.sleep(2)
 
-        assertEquals(valueOf(12).kScale(), statisticsStore.min())
+        assertEquals(valueOf(12).n26Scale(), statisticsStore.min())
 
         SECONDS.sleep(2)
 
-        assertEquals(ZERO.kScale(), statisticsStore.min())
+        assertEquals(ZERO.n26Scale(), statisticsStore.min())
     }
 
     @Test
@@ -240,11 +240,11 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(9).kScale(),  statisticsStore.min())
+        assertEquals(valueOf(9).n26Scale(),  statisticsStore.min())
 
         statisticsStore.clear()
 
-        assertEquals(ZERO.kScale(),  statisticsStore.min())
+        assertEquals(ZERO.n26Scale(),  statisticsStore.min())
     }
 
     @Test
@@ -255,7 +255,7 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(12).kScale(), statisticsStore.max())
+        assertEquals(valueOf(12).n26Scale(), statisticsStore.max())
     }
 
     @Test
@@ -266,15 +266,15 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(12).kScale(), statisticsStore.max())
+        assertEquals(valueOf(12).n26Scale(), statisticsStore.max())
 
         SECONDS.sleep(1)
 
-        assertEquals(valueOf(12).kScale(), statisticsStore.max())
+        assertEquals(valueOf(12).n26Scale(), statisticsStore.max())
 
         SECONDS.sleep(2)
 
-        assertEquals(ZERO.kScale(), statisticsStore.max())
+        assertEquals(ZERO.n26Scale(), statisticsStore.max())
     }
 
     @Test
@@ -285,19 +285,19 @@ class StatisticsStoreTest {
         statisticsStore.add(element1)
         statisticsStore.add(element2)
 
-        assertEquals(valueOf(12.0).kScale(),  statisticsStore.max())
+        assertEquals(valueOf(12.0).n26Scale(),  statisticsStore.max())
 
         statisticsStore.clear()
 
-        assertEquals(ZERO.kScale(),  statisticsStore.max())
+        assertEquals(ZERO.n26Scale(),  statisticsStore.max())
     }
 
     @Test
     fun `empty store should return zero sum, avg, min, max and count`() {
-        assertEquals(ZERO.kScale(),  statisticsStore.sum())
-        assertEquals(ZERO.kScale(),  statisticsStore.avg())
-        assertEquals(ZERO.kScale(),  statisticsStore.min())
-        assertEquals(ZERO.kScale(),  statisticsStore.max())
+        assertEquals(ZERO.n26Scale(),  statisticsStore.sum())
+        assertEquals(ZERO.n26Scale(),  statisticsStore.avg())
+        assertEquals(ZERO.n26Scale(),  statisticsStore.min())
+        assertEquals(ZERO.n26Scale(),  statisticsStore.max())
         assertEquals(0,  statisticsStore.count())
     }
 

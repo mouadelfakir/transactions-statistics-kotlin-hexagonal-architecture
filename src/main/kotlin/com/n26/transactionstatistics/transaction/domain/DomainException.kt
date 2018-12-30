@@ -2,9 +2,7 @@ package com.n26.transactionstatistics.transaction.domain
 
 import java.lang.RuntimeException
 
-open class DomainException(val code: TransactionError): RuntimeException(){
-
-}
+open class DomainException(val code: TransactionError): RuntimeException()
 
 class TransactionCreationException(code: TransactionError) : DomainException(code)
 
