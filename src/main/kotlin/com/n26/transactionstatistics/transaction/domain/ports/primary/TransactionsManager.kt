@@ -1,4 +1,7 @@
-package com.n26.transactionstatistics.transaction.domain
+package com.n26.transactionstatistics.transaction.domain.ports.primary
+
+import com.n26.transactionstatistics.transaction.domain.Transaction
+import com.n26.transactionstatistics.transaction.domain.ports.secondary.TransactionRecords
 
 class TransactionsManager(val transactionRecords: TransactionRecords) {
 

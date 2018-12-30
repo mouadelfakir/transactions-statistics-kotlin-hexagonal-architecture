@@ -7,6 +7,8 @@ import java.time.Instant
 
 data class Transaction(val amount: BigDecimal, val timestamp: Instant) {
 
+
+
     init {
         if(Instant.now().isBefore(timestamp))
             IN_FUTURE_ERR.throwIt()
