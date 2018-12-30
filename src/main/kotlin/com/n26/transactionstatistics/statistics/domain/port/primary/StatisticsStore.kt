@@ -14,37 +14,42 @@ class StatisticsStore(val executor: ScheduledExecutorService, var sum : BigDecim
 
     private val elements = ConcurrentLinkedDeque<Element>()
 
+    @Synchronized
     fun add(element: Element): Boolean {
         beforeAdd(element)
         return elements.add(element)
     }
 
-    fun has(element: Element): Boolean = elements.contains(element)
-
-    fun scheduleEvict(element: Element, delay: Long) {
-        executor.schedule(element, delay, TimeUnit.SECONDS)
-    }
-
+    @Synchronized
     fun evict(element: Element) {
         elements.remove(element)
         afterEvict(element)
     }
 
     @Synchronized
+    fun clear() {
+        elements.clear()
+        afterClear()
+    }
+
+    fun scheduleEvict(element: Element, delay: Long) {
+        executor.schedule(element, delay, TimeUnit.SECONDS)
+    }
+
+    fun has(element: Element): Boolean = elements.contains(element)
+
     private fun beforeAdd(element: Element) {
         sum = sum.add(element.amount)
         min = if (count() == 0) element.amount else if (element.amount < min) element.amount else min
         max = if (count() == 0) element.amount else if (element.amount > max) element.amount else max
     }
 
-    @Synchronized
     private fun afterEvict(element: Element) {
         sum = sum.minus(element.amount)
         min = elements.stream().map { e -> e.amount }.min { a, b -> a.compareTo(b) }.orElse(ZERO)
         max = elements.stream().map { e -> e.amount }.max { a, b -> a.compareTo(b) }.orElse(ZERO)
     }
 
-    @Synchronized
     private fun afterClear() {
         sum = ZERO
         min = ZERO
@@ -60,11 +65,6 @@ class StatisticsStore(val executor: ScheduledExecutorService, var sum : BigDecim
     fun max(): BigDecimal = max.to2Up()
 
     fun count(): Int = elements.size
-
-    fun clear() {
-        elements.clear()
-        afterClear()
-    }
 
     fun statistics(): Statistics = Statistics(sum(), avg(), max(), min(), count())
 
