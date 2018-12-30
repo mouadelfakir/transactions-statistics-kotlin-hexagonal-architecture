@@ -2,6 +2,7 @@ package com.n26.transactionstatistics.statistics
 
 import com.n26.transactionstatistics.statistics.domain.Element
 import com.n26.transactionstatistics.statistics.domain.Statistics
+import com.n26.transactionstatistics.statistics.domain.port.primary.StatisticsStore
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal.ZERO
@@ -44,7 +45,7 @@ class StatisticsStoreTest {
     @Test
     fun `can eject many expired elements`() {
         val element1 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(59))
-        val element2 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(58))
+        val element2 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(57))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -57,7 +58,7 @@ class StatisticsStoreTest {
         assertFalse(statisticsStore.has(element1))
         assertTrue(statisticsStore.has(element2))
 
-        TimeUnit.SECONDS.sleep(1)
+        TimeUnit.SECONDS.sleep(2)
 
         assertFalse(statisticsStore.has(element1))
         assertFalse(statisticsStore.has(element2))
@@ -214,7 +215,7 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right minimum when elements evicted`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(58))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(57))
         val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(59))
 
         statisticsStore.add(element1)
@@ -226,7 +227,7 @@ class StatisticsStoreTest {
 
         assertEquals(valueOf(12).setScale(2, RoundingMode.HALF_UP), statisticsStore.min())
 
-        TimeUnit.SECONDS.sleep(1)
+        TimeUnit.SECONDS.sleep(2)
 
         assertEquals(ZERO.setScale(2, RoundingMode.HALF_UP), statisticsStore.min())
     }

@@ -1,10 +1,9 @@
 package com.n26.transactionstatistics.statistics.domain
 
-import com.n26.transactionstatistics.statistics.StatisticsStore
+import com.n26.transactionstatistics.statistics.domain.port.primary.StatisticsStore
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
 import java.util.concurrent.Callable
 
 data class Element(val statisticsStore: StatisticsStore, val amount: BigDecimal, val timestamp: Instant) : Callable<Unit>{

@@ -1,4 +1,4 @@
-package com.n26.transactionstatistics.statistics
+package com.n26.transactionstatistics.statistics.domain.port.primary
 
 import com.n26.transactionstatistics.statistics.domain.Element
 import com.n26.transactionstatistics.statistics.domain.Statistics

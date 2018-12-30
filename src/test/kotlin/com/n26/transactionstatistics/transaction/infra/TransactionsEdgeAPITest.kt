@@ -4,6 +4,7 @@ import com.n26.transactionstatistics.transaction.domain.ports.primary.Transactio
 import com.n26.transactionstatistics.transaction.infra.adapters.primary.TransactionsEdgeAPI
 import com.n26.transactionstatistics.transaction.infra.adapters.primary.dto.TransactionAPI
 import com.n26.transactionstatistics.transaction.infra.adapters.secondary.InMemoryTransactionRecords
+import com.n26.transactionstatistics.transaction.infra.mock.MockApplicationEventPublisher
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -18,7 +19,7 @@ class TransactionsEdgeAPITest {
 
     @Before
     fun setUp() {
-        transactionsEdgeAPI = TransactionsEdgeAPI(TransactionsManager(transactionRecords));
+        transactionsEdgeAPI = TransactionsEdgeAPI(TransactionsManager(transactionRecords), MockApplicationEventPublisher());
     }
 
     @Test
