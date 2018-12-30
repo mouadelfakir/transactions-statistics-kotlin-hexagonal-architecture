@@ -18,7 +18,7 @@ open class Application {
     open fun transactionsManager(): TransactionsManager = TransactionsManager(InMemoryTransactionRecords())
 
     @Bean
-    open fun statisticsStore(): StatisticsStore = StatisticsStore(Executors.newSingleThreadScheduledExecutor())
+    open fun statisticsStore(): StatisticsStore = StatisticsStore(Executors.newScheduledThreadPool(2))
 
     @Bean
     open fun statisticsEventHandler(): StatisticsEventHandler = StatisticsEventHandler(statisticsStore())
