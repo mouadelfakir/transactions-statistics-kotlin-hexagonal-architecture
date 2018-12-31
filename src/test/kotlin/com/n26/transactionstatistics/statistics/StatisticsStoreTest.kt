@@ -3,6 +3,7 @@ package com.n26.transactionstatistics.statistics
 import com.n26.transactionstatistics.statistics.domain.Element
 import com.n26.transactionstatistics.statistics.domain.Statistics
 import com.n26.transactionstatistics.statistics.domain.port.primary.StatisticsStore
+import com.n26.transactionstatistics.util.ApplicationConstantes.Companion.delay_to_expire
 import com.n26.transactionstatistics.util.n26Scale
 import org.junit.Before
 import org.junit.Test
@@ -32,20 +33,20 @@ class StatisticsStoreTest {
 
     @Test
     fun `expired elements get evicted`() {
-        val element = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(60))
+        val element = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(delay_to_expire - 1))
 
         statisticsStore.add(element)
         assertTrue(statisticsStore.has(element))
 
-        SECONDS.sleep(1)
+        SECONDS.sleep(2)
 
         assertFalse(statisticsStore.has(element))
     }
 
     @Test
     fun `can eject many expired elements`() {
-        val element1 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(59))
-        val element2 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(57))
+        val element1 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(delay_to_expire - 1))
+        val element2 = Element(statisticsStore, valueOf(1234), Instant.now().minusSeconds(delay_to_expire - 3))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -67,8 +68,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `can clear all statistics store`() {
-        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -81,8 +82,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `can calculate statistics sum after add`() {
-        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -92,8 +93,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `can calculate statistics sum after evict`() {
-        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(59))
-        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(delay_to_expire - 1))
+        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -107,8 +108,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `sum should be zero when statistics store get cleared`() {
-        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -122,8 +123,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right count when elements added`() {
-        val element1 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -133,8 +134,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right count when elements evicted`() {
-        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(60))
-        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(delay_to_expire))
+        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -148,8 +149,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return count zero when store get cleared`() {
-        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(1.005), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9.34), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -163,8 +164,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right avg when elements are added`() {
-        val element1 = Element(statisticsStore, valueOf(10), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(11), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(10), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(11), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -174,8 +175,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right avg when elements are evicted`() {
-        val element1 = Element(statisticsStore, valueOf(10), Instant.now().minusSeconds(60))
-        val element2 = Element(statisticsStore, valueOf(11), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(10), Instant.now().minusSeconds(delay_to_expire))
+        val element2 = Element(statisticsStore, valueOf(11), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -189,8 +190,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `avg should be zero when store get cleared`() {
-        val element1 = Element(statisticsStore, valueOf(10), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(11), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(10), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(11), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -204,8 +205,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right minimum amount when elements are added`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -215,8 +216,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right minimum when elements evicted`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(57))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(59))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(delay_to_expire - 3))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 1))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -234,8 +235,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `minimum should be zero when store get cleared`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -249,8 +250,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right maximum amount when elements are added`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -260,8 +261,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `should return the right maximum when elements evicted`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(58))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(59))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(delay_to_expire - 2))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 1))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -279,8 +280,8 @@ class StatisticsStoreTest {
 
     @Test
     fun `maximum should be zero when store get cleared`() {
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)
@@ -304,9 +305,9 @@ class StatisticsStoreTest {
     @Test
     fun `load statistics`() {
 
-        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(10))
-        val element2 = Element(statisticsStore, valueOf(9.11), Instant.now().minusSeconds(10))
-        val element3 = Element(statisticsStore, valueOf(17.12), Instant.now().minusSeconds(10))
+        val element1 = Element(statisticsStore, valueOf(12), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element2 = Element(statisticsStore, valueOf(9.11), Instant.now().minusSeconds(delay_to_expire - 50))
+        val element3 = Element(statisticsStore, valueOf(17.12), Instant.now().minusSeconds(delay_to_expire - 50))
 
         statisticsStore.add(element1)
         statisticsStore.add(element2)

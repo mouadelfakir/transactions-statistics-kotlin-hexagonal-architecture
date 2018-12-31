@@ -5,6 +5,7 @@ import com.n26.transactionstatistics.transaction.infra.adapters.primary.Transact
 import com.n26.transactionstatistics.transaction.infra.adapters.primary.dto.TransactionAPI
 import com.n26.transactionstatistics.transaction.infra.adapters.secondary.InMemoryTransactionRecords
 import com.n26.transactionstatistics.transaction.infra.mock.MockApplicationEventPublisher
+import com.n26.transactionstatistics.util.ApplicationConstantes.Companion.delay_to_expire
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -38,7 +39,7 @@ class TransactionsEdgeAPITest {
     @Test
     fun `return error code 204 when transaction is older than 60s`() {
 
-        val response = transactionsEdgeAPI.add(TransactionAPI("1234", Instant.now().minusSeconds(61).toString()))
+        val response = transactionsEdgeAPI.add(TransactionAPI("1234", Instant.now().minusSeconds(delay_to_expire + 1).toString()))
         assertEquals(204, response.statusCode.value())
     }
 
